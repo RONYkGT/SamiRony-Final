@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  galactic_dev:
+    image: galactic_dev_image
+    container_name: galactic_dev_container
+    volumes:
+      - ./src:/root/ros_ws/src:delegated
+      #- ./src/package2:/root/ros_ws/src/package2:delegated
+    tty: true
+    stdin_open: true
