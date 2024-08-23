@@ -6,6 +6,5 @@ services:
     container_name: galactic_dev_container
     volumes:
       - ./src:/root/ros_ws/src:delegated
-      #- ./src/package2:/root/ros_ws/src/package2:delegated
     tty: true
     stdin_open: true

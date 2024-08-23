@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="Project">
+    <include path="../../../../../../bumpgo/behavior_trees_xml/bumpgo.xml"/>
+    <include path="behavior_tree.xml"/>
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <Action ID="Backward" editable="true">
+            <input_port name="duration"/>
+        </Action>
+        <Condition ID="CanClose" editable="true"/>
+        <Condition ID="CanInView" editable="true"/>
+        <Condition ID="CanPicked" editable="true"/>
+        <Action ID="CheckLaser" editable="true"/>
+        <Action ID="DropCan" editable="true"/>
+        <Action ID="FindCan" editable="true"/>
+        <Action ID="FindQR" editable="true"/>
+        <Action ID="Forward" editable="true"/>
+        <Action ID="MoveForward" editable="true"/>
+        <Condition ID="OnBlackStrip" editable="true"/>
+        <Action ID="PickCan" editable="true"/>
+        <Condition ID="QRinView" editable="true"/>
+        <Action ID="Turn" editable="true">
+            <input_port name="duration"/>
+        </Action>
+    </TreeNodesModel>
+</root>
