@@ -4,8 +4,11 @@ from sensor_msgs.msg import Image
 from std_msgs.msg import Int32
 import cv2
 from cv_bridge import CvBridge
-from ultralytics import YOLO
-
+from ultralytics import YOLO # type: ignore
+NOT_IN_VIEW = 0
+LEFT = 1
+CENTER = 2
+RIGHT = 3
 class ImageSubscriber(Node):
 
     def __init__(self):
@@ -52,7 +55,7 @@ class ImageSubscriber(Node):
 
             # Initialize detection flag and position
             object_detected = False
-            position = 0  # Default to 0 (Object not detected)
+            position = NOT_IN_VIEW  # Default to 0 (Object not detected)
 
             for box in detections:
                 # Ensure the box has the required fields: x1, y1, x2, y2, confidence, class_id
@@ -73,11 +76,11 @@ class ImageSubscriber(Node):
 
                 # Determine position of the object with refined boundaries
                 if center_x < left_boundary:
-                    position = 3  # Left
+                    position = LEFT  # Left
                 elif center_x > right_boundary:
-                    position = 1  # Right
+                    position = RIGHT  # Right
                 else:
-                    position = 2  # Center
+                    position = CENTER  # Center
 
                 # Draw bounding box and label
                 cv2.rectangle(current_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
