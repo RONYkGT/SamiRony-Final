@@ -58,9 +58,9 @@ class QRCodeDetector(Node):
                     
                     # Determine position of QR code
                     if center_x < width * LEFT_BOUNDARY:
-                        position = 1  # Left
+                        position = 3  # Left
                     elif center_x > width * RIGHT_BOUNDARY:
-                        position = 3  # Right
+                        position = 1  # Right
                     else:
                         position = 2  # Center
 
