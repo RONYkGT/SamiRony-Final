@@ -20,8 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'can_detection_node =detection.can_detection:main'
-
+            'can_detection_node =detection.can_detection:main',
+	        'qr_detection_node = detection.qr_detection:main',
         ],
     },
 )
