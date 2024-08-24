@@ -30,7 +30,7 @@ class ImageSubscriber(Node):
         self.bridge = CvBridge()
 
         # Load YOLOv8 model
-        self.model = YOLO("best.pt")  # Load your YOLOv8 model file
+        self.model = YOLO("/root/ros_ws/src/object_detection/src/detection/detection/best.pt")  # Load your YOLOv8 model file
         self.model.fuse()  # Optimize the model if needed
 
     def listener_callback(self, data):
@@ -92,8 +92,8 @@ class ImageSubscriber(Node):
             self.position_publisher.publish(position_msg)
 
             # Display the resulting frame
-            cv2.imshow("Camera Feed", current_frame)
-            cv2.waitKey(1)
+            #cv2.imshow("Camera Feed", current_frame)
+            #cv2.waitKey(1)
 
         except Exception as e:
             self.get_logger().error(f"Error in listener_callback: {e}")
