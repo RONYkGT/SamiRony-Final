@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
-from std_msgs.msg import Int32
+from std_msgs.msg import UInt8
 import cv2
 from cv_bridge import CvBridge
 from ultralytics import YOLO # type: ignore
@@ -25,7 +25,7 @@ class ImageSubscriber(Node):
 
         # Create a publisher for the detected object position
         self.position_publisher = self.create_publisher(
-            Int32,
+            UInt8,
             '/can_in_view',
             10
         )
@@ -90,7 +90,7 @@ class ImageSubscriber(Node):
                 self.get_logger().info("Object not detected")
 
             # Publish the position
-            position_msg = Int32()
+            position_msg = UInt8()
             position_msg.data = position
             self.position_publisher.publish(position_msg)
 
