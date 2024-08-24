@@ -1,29 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
   <BehaviorTree ID="Untitled">
-    <ReactiveSequence>
-      <Fallback>
-        <CanInView/>
-        <FindCan/>
-      </Fallback>
-      <Fallback>
-        <CanClose/>
-        <MoveForward/>
-      </Fallback>
-      <Fallback>
-        <CanPicked/>
-        <PickCan/>
-      </Fallback>
-      <Fallback>
-        <QRinView/>
-        <FindQR/>
-      </Fallback>
-      <Fallback>
-        <OnBlackStrip/>
-        <MoveForward/>
-      </Fallback>
-      <DropCan/>
-    </ReactiveSequence>
+    <RetryUntilSuccessful num_attempts="5">
+      <ReactiveSequence>
+        <Fallback>
+          <Fallback>
+            <CanInView/>
+            <CanClose/>
+          </Fallback>
+          <FindCan/>
+        </Fallback>
+        <Fallback>
+          <CanClose/>
+          <MoveForward/>
+        </Fallback>
+        <Fallback>
+          <CanPicked/>
+          <PickCan/>
+        </Fallback>
+        <Fallback>
+          <QRinView/>
+          <FindQR/>
+        </Fallback>
+        <Fallback>
+          <OnBlackStrip/>
+          <MoveForward/>
+        </Fallback>
+        <DropCan/>
+      </ReactiveSequence>
+    </RetryUntilSuccessful>
   </BehaviorTree>
 
   <!-- Description of Node Models (used by Groot) -->

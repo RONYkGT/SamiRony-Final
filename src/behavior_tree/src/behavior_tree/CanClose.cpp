@@ -18,5 +18,5 @@ BT::NodeStatus CanClose::tick()
     // Example debug message
     RCLCPP_DEBUG(node_->get_logger(), "Exiting CanClose node");
 
-    return BT::NodeStatus::SUCCESS;
+    return BT::NodeStatus::FAILURE;
 }

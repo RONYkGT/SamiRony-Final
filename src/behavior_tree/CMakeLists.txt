@@ -15,14 +15,19 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(bot_behavior_interfaces REQUIRED) 
 
 set(dependencies
   behaviortree_cpp_v3
   ament_index_cpp
   rclcpp
+  rclcpp_action
+  bot_behavior_interfaces 
 )
 
 include_directories(include)
+include_directories(${bot_behavior_interfaces_INCLUDE_DIRS})  # Include the directory for constants
 
 # Add libraries for your nodes
 add_library(${PROJECT_NAME} SHARED
@@ -63,7 +68,7 @@ install(TARGETS
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-ament_export_include_directories(include)
+ament_export_include_directories(include ${bot_behavior_interfaces_INCLUDE_DIRS})  
 ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
 ament_package()

@@ -1,7 +1,114 @@
 #include "behavior_tree/FindCan.hpp"
 
+FindCan::FindCan(const std::string &name, const BT::NodeConfiguration &config)
+    : BT::ActionNodeBase(name, config), node_(rclcpp::Node::make_shared("FindCan"))
+{
+    node_->get_logger().set_level(rclcpp::Logger::Level::Debug);
+    RCLCPP_INFO(node_->get_logger(), "FindCan initialized %d", item_position::CENTER);
+    
+    // Initialize action clients
+    turn_left_client_ = rclcpp_action::create_client<bot_behavior_interfaces::action::TurnLeft>(node_, "turn_left");
+    turn_right_client_ = rclcpp_action::create_client<bot_behavior_interfaces::action::TurnRight>(node_, "turn_right");
+    
+    // Subscribe to can_in_view topic
+    subscriber_ = node_->create_subscription<std_msgs::msg::UInt8>(
+        "can_in_view", 10, std::bind(&FindCan::callback, this, std::placeholders::_1));
+}
+
+void FindCan::callback(const std_msgs::msg::UInt8::SharedPtr msg)
+{
+    RCLCPP_INFO(node_->get_logger(), "Received msg callback: %d", msg->data);
+    can_position_ = msg->data;
+    
+    if (can_position_ == item_position::CENTER && turning_in_progress_)
+    {
+        RCLCPP_INFO(node_->get_logger(), "Can in center - Halting ongoing actions.");
+        halt();
+    }
+}
+
 BT::NodeStatus FindCan::tick()
 {
-    std::this_thread::sleep_for(std::chrono::seconds(3));
-    return BT::NodeStatus::SUCCESS;
+    rclcpp::spin_some(node_);
+    RCLCPP_INFO(node_->get_logger(), "Ticking");
+
+    // If the can is centered, halt any ongoing actions and return SUCCESS
+    if (can_position_ == item_position::CENTER) 
+    {
+        if (turning_in_progress_)
+        {
+            halt();
+        }
+        return BT::NodeStatus::SUCCESS;
+    }
+
+    // Check for the LEFT or NOT_IN_VIEW condition
+    if (can_position_ == item_position::LEFT || can_position_ == item_position::NOT_IN_VIEW) 
+    {
+        // Ensure the action server is available before sending the goal
+        if (!turn_left_client_->wait_for_action_server(std::chrono::seconds(1)))
+        {
+            RCLCPP_ERROR(node_->get_logger(), "TurnLeft action server not available.");
+            return BT::NodeStatus::RUNNING;
+        }
+
+        if (!turn_left_goal_handle_)
+        {
+            auto goal = bot_behavior_interfaces::action::TurnLeft::Goal();
+            auto send_goal_options = rclcpp_action::Client<bot_behavior_interfaces::action::TurnLeft>::SendGoalOptions();
+            send_goal_options.feedback_callback = [](auto, auto){};
+            auto goal_future = turn_left_client_->async_send_goal(goal, send_goal_options);
+            rclcpp::spin_until_future_complete(node_, goal_future);
+            turn_left_goal_handle_ = goal_future.get();
+            turning_in_progress_ = true;
+        }
+        return BT::NodeStatus::RUNNING;
+    }
+
+    // Check for the RIGHT condition
+    if (can_position_ == item_position::RIGHT) 
+    {
+        // Ensure the action server is available before sending the goal
+        if (!turn_right_client_->wait_for_action_server(std::chrono::seconds(1)))
+        {
+            RCLCPP_ERROR(node_->get_logger(), "TurnRight action server not available.");
+            return BT::NodeStatus::RUNNING;
+        }
+
+        if (!turn_right_goal_handle_)
+        {
+            auto goal = bot_behavior_interfaces::action::TurnRight::Goal();
+            auto send_goal_options = rclcpp_action::Client<bot_behavior_interfaces::action::TurnRight>::SendGoalOptions();
+            send_goal_options.feedback_callback = [](auto, auto){};
+            auto goal_future = turn_right_client_->async_send_goal(goal, send_goal_options);
+            rclcpp::spin_until_future_complete(node_, goal_future);
+            turn_right_goal_handle_ = goal_future.get();
+            turning_in_progress_ = true;
+        }
+        return BT::NodeStatus::RUNNING;
+    }
+
+    return BT::NodeStatus::RUNNING;
+}
+
+void FindCan::halt()
+{
+    if (turning_in_progress_)
+    {
+        if (turn_left_goal_handle_)
+        {
+            auto cancel_future = turn_left_client_->async_cancel_goal(turn_left_goal_handle_);
+            rclcpp::spin_until_future_complete(node_, cancel_future);
+            RCLCPP_INFO(node_->get_logger(), "TurnLeft action canceled.");
+            turn_left_goal_handle_.reset();
+        }
+        if (turn_right_goal_handle_)
+        {
+            auto cancel_future = turn_right_client_->async_cancel_goal(turn_right_goal_handle_);
+            rclcpp::spin_until_future_complete(node_, cancel_future);
+            RCLCPP_INFO(node_->get_logger(), "TurnRight action canceled.");
+            turn_right_goal_handle_.reset();
+        }
+        turning_in_progress_ = false;
+    }
 }
