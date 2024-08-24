@@ -1,13 +1,13 @@
-import rclpy
-from rclpy.node import Node
-from sensor_msgs.msg import Image
-from std_msgs.msg import Int32
 import cv2
 from cv_bridge import CvBridge
-from ultralytics import YOLO
+from sensor_msgs.msg import Image
+from std_msgs.msg import Int32
+import rclpy
+from rclpy.node import Node
+import time
+import numpy as np
 
 class ImageSubscriber(Node):
-
     def __init__(self):
         super().__init__('image_subscriber')
 
@@ -29,59 +29,60 @@ class ImageSubscriber(Node):
 
         self.bridge = CvBridge()
 
-        # Load YOLOv8 model
-        self.model = YOLO("/root/ros_ws/src/object_detection/src/detection/detection/best.pt")  # Load your YOLOv8 model file
-        self.model.fuse()  # Optimize the model if needed
-
     def listener_callback(self, data):
+        start_time = time.time()  # Start timing the processing
+
         try:
             # Convert ROS image message to OpenCV image
             current_frame = self.bridge.imgmsg_to_cv2(data, desired_encoding='bgr8')
 
-            # Perform object detection using YOLOv8
-            results = self.model(current_frame)
+            # Convert the image to the HSV color space
+            hsv_frame = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
 
-            # Extract results (bounding boxes)
-            detections = results[0].boxes  # Get detection boxes
-            class_names = self.model.names  # Get class names
+            # Define the range for blue color in HSV
+            lower_blue = np.array([100, 150, 0])
+            upper_blue = np.array([140, 255, 255])
+
+            # Create a mask for blue color
+            mask = cv2.inRange(hsv_frame, lower_blue, upper_blue)
+
+            # Apply the mask to the image
+            blue_objects = cv2.bitwise_and(current_frame, current_frame, mask=mask)
+
+            # Convert the masked image to grayscale
+            gray_frame = cv2.cvtColor(blue_objects, cv2.COLOR_BGR2GRAY)
+
+            # Perform edge detection using Canny
+            edges = cv2.Canny(gray_frame, 100, 200)
+
+            # Find contours in the edged image
+            contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+            # Initialize detection flag and position
+            object_detected = False
+            position = 0  # Default to 0 (Object not detected)
 
             # Image width to determine left, center, right regions
             img_width = current_frame.shape[1]
             left_boundary = img_width * 0.45  # Narrower center region
             right_boundary = img_width * 0.55  # Narrower center region
 
-            # Initialize detection flag and position
-            object_detected = False
-            position = 0  # Default to 0 (Object not detected)
+            for contour in contours:
+                # Get bounding box of the contour
+                x, y, w, h = cv2.boundingRect(contour)
+                center_x = x + w // 2
 
-            for box in detections:
-                # Ensure the box has the required fields: x1, y1, x2, y2, confidence, class_id
-                if not hasattr(box, 'xyxy') or not hasattr(box, 'conf') or not hasattr(box, 'cls'):
-                    self.get_logger().warn(f"Skipping box with insufficient data: {box}")
-                    continue
-
-                # Extract the bounding box coordinates, confidence, and class ID
-                x1, y1, x2, y2 = box.xyxy[0].cpu().numpy().astype(int)
-                confidence = float(box.conf.item())  # Convert confidence to a scalar float
-                class_id = int(box.cls.item())  # Convert class ID to a scalar int
-
-                label = class_names[class_id]  # Get class name
-
-                # Object detected
-                object_detected = True
-                center_x = (x1 + x2) // 2  # Calculate the center x-coordinate of the bounding box
+                # Draw bounding box around detected object
+                cv2.rectangle(current_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
                 # Determine position of the object with refined boundaries
+                object_detected = True
                 if center_x < left_boundary:
                     position = 3  # Left
                 elif center_x > right_boundary:
                     position = 1  # Right
                 else:
                     position = 2  # Center
-
-                # Draw bounding box and label
-                cv2.rectangle(current_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                cv2.putText(current_frame, f"{label} {confidence:.2f}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
             if not object_detected:
                 self.get_logger().info("Object not detected")
@@ -91,9 +92,14 @@ class ImageSubscriber(Node):
             position_msg.data = position
             self.position_publisher.publish(position_msg)
 
-            # Display the resulting frame
-            #cv2.imshow("Camera Feed", current_frame)
-            #cv2.waitKey(1)
+            # Calculate and log processing time
+            processing_time = time.time() - start_time
+            self.get_logger().info(f"Detection status: {'Object detected' if object_detected else 'Object not detected'}")
+            self.get_logger().info(f"Processing time: {processing_time:.2f} seconds")
+
+            # Optionally display the resulting frame
+            # cv2.imshow("Camera Feed", current_frame)
+            # cv2.waitKey(1)
 
         except Exception as e:
             self.get_logger().error(f"Error in listener_callback: {e}")
