@@ -22,9 +22,9 @@ class ImageSubscriber(Node):
 
         # Create a publisher for the detected object position
         self.position_publisher = self.create_publisher(
-        Int32,
-        '/object_position',
-        10
+            Int32,
+            '/can_in_view',
+            10
         )
 
         self.bridge = CvBridge()
