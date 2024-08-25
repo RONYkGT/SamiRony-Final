@@ -8,6 +8,7 @@ MoveForward::MoveForward(const std::string& name, const BT::NodeConfiguration& c
 
 BT::NodeStatus MoveForward::tick()
 {
+    return BT::NodeStatus::RUNNING;
     if (!is_running_)
     {
         start_time_ = std::chrono::steady_clock::now();

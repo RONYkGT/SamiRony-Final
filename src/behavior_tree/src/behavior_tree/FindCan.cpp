@@ -55,7 +55,7 @@ BT::NodeStatus FindCan::onRunning()
         {
             halt();
         }
-        return BT::NodeStatus::RUNNING;
+        return BT::NodeStatus::SUCCESS;
     }
 
     // Check if action server is available before sending a goal
