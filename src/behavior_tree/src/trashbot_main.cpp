@@ -53,14 +53,21 @@ int main(int argc, char **argv)
 
     std::cout << "test1";
     // Run the tree
-    BT::NodeStatus status = BT::NodeStatus::RUNNING;
-    std::cout << "test2";
-    while (rclcpp::ok() && status == BT::NodeStatus::RUNNING)
-    {
-        status = tree.tickRoot();
-        rclcpp::spin_some(node);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+    auto status = tree.tickOnce();
+    std::cout << "--- status: " << toStr(status) << "\n\n";
+
+  while(status == NodeStatus::RUNNING) 
+  {
+    // Sleep to avoid busy loops.
+    // do NOT use other sleep functions!
+    // Small sleep time is OK, here we use a large one only to
+    // have less messages on the console.
+    tree.sleep(std::chrono::milliseconds(10));
+
+    std::cout << "--- ticking\n";
+    status = tree.tickOnce();
+    std::cout << "--- status: " << toStr(status) << "\n\n";
+  }
 
     rclcpp::shutdown();
     return 0;

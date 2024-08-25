@@ -3,29 +3,29 @@
   <BehaviorTree ID="Untitled">
     <RetryUntilSuccessful num_attempts="5">
       <ReactiveSequence>
-        <Fallback>
-          <Fallback>
+        <ReactiveFallback>
+          <ReactiveFallback>
             <CanInView/>
             <CanClose/>
-          </Fallback>
+          </ReactiveFallback>
           <FindCan/>
-        </Fallback>
-        <Fallback>
+        </ReactiveFallback>
+        <ReactiveFallback>
           <CanClose/>
           <MoveForward/>
-        </Fallback>
-        <Fallback>
+        </ReactiveFallback>
+        <ReactiveFallback>
           <CanPicked/>
           <PickCan/>
-        </Fallback>
-        <Fallback>
+        </ReactiveFallback>
+        <ReactiveFallback>
           <QRinView/>
           <FindQR/>
-        </Fallback>
-        <Fallback>
+        </ReactiveFallback>
+        <ReactiveFallback>
           <OnBlackStrip/>
           <MoveForward/>
-        </Fallback>
+        </ReactiveFallback>
         <DropCan/>
       </ReactiveSequence>
     </RetryUntilSuccessful>
