@@ -5,6 +5,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <iostream>
 #include "ament_index_cpp/get_package_prefix.hpp"
+#include "ament_index_cpp/get_package_share_directory.hpp"
+
 #include "behavior_tree/FindCan.hpp"
 #include "behavior_tree/DropCan.hpp"
 #include "behavior_tree/FindQR.hpp"
@@ -38,7 +40,8 @@ int main(int argc, char **argv)
     factory.registerNodeType<OnBlackStrip>("OnBlackStrip");
 
     // Load the XML file that defines the behavior tree
-    std::string pkgpath = ament_index_cpp::get_package_prefix("behavior_tree");
+    
+    std::string pkgpath = ament_index_cpp::get_package_share_directory("behavior_tree");
     std::string xml_file = pkgpath + "/behavior_trees_xml/behavior_tree.xml";
     std::cout << "Package path: " << pkgpath << std::endl;
     std::cout << "XML file path: " << xml_file << std::endl;
