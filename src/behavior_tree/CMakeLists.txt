@@ -17,13 +17,19 @@ find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(bot_behavior_interfaces REQUIRED) 
+find_package(sensor_msgs REQUIRED) 
+find_package(std_msgs REQUIRED)
+
+
 
 set(dependencies
   behaviortree_cpp_v3
   ament_index_cpp
   rclcpp
   rclcpp_action
-  bot_behavior_interfaces 
+  bot_behavior_interfaces
+  sensor_msgs 
+  std_msgs
 )
 
 include_directories(include)

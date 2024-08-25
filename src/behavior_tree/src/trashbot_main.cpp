@@ -4,6 +4,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <iostream>
+#include "ament_index_cpp/get_package_prefix.hpp"
 #include "ament_index_cpp/get_package_share_directory.hpp"
 
 #include "behavior_tree/FindCan.hpp"
@@ -61,7 +62,7 @@ int main(int argc, char **argv)
     {
         status = tree.tickRoot();
         rclcpp::spin_some(node);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     rclcpp::shutdown();
