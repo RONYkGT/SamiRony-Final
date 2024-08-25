@@ -20,6 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'turn_right_action_server = robot_driver.TurnRightActionServer:main',
+            'turn_left_action_server = robot_driver.TurnLeftActionServer:main',
+
         ],
     },
 )
