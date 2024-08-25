@@ -57,8 +57,9 @@ install(DIRECTORY include/
 )
 
 # Install XML files for behavior trees
-install(DIRECTORY behavior_trees_xml)
-
+install(DIRECTORY behavior_trees_xml
+  DESTINATION share/${PROJECT_NAME}
+)
 # Install targets
 install(TARGETS
   ${PROJECT_NAME}
