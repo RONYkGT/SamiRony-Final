@@ -55,7 +55,7 @@ int main(int argc, char **argv)
     // Run the tree
     BT::NodeStatus status = BT::NodeStatus::RUNNING;
     std::cout << "test2";
-    while (rclcpp::ok() && status == BT::NodeStatus::RUNNING)
+    while (rclcpp::ok() && status != BT::NodeStatus::SUCCESS)
     {
         status = tree.tickRoot();
         rclcpp::spin_some(node);

@@ -1,7 +1,7 @@
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
-from std_msgs.msg import Int32
+from std_msgs.msg import UInt8
 import rclpy
 from rclpy.node import Node
 import time
@@ -22,7 +22,7 @@ class ImageSubscriber(Node):
 
         # Create a publisher for the detected object position
         self.position_publisher = self.create_publisher(
-            Int32,
+            UInt8,
             '/can_in_view',
             10
         )
@@ -78,9 +78,9 @@ class ImageSubscriber(Node):
                 # Determine position of the object with refined boundaries
                 object_detected = True
                 if center_x < left_boundary:
-                    position = 3  # Left
+                    position = 1  # Left
                 elif center_x > right_boundary:
-                    position = 1  # Right
+                    position = 3  # Right
                 else:
                     position = 2  # Center
 
@@ -88,7 +88,7 @@ class ImageSubscriber(Node):
                 self.get_logger().info("Object not detected")
 
             # Publish the position
-            position_msg = Int32()
+            position_msg = UInt8()
             position_msg.data = position
             self.position_publisher.publish(position_msg)
 
