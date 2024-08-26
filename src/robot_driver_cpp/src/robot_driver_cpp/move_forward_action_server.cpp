@@ -7,17 +7,12 @@ MoveForwardActionServer::MoveForwardActionServer() : Node("move_forward_action_s
     this->declare_parameter<double>("move_speed", 0.2);
     this->get_parameter("move_speed", move_speed_);
 
-    auto options = rclcpp_action::ServerOptions();
-    options.result_timeout = std::chrono::milliseconds(0);
-    options.goal_handling_timeout = std::chrono::milliseconds(0);
-    
     action_server_ = rclcpp_action::create_server<MoveForward>(
         this,
         "move_forward",
         std::bind(&MoveForwardActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&MoveForwardActionServer::handle_cancel, this, std::placeholders::_1),
-        std::bind(&MoveForwardActionServer::handle_accepted, this, std::placeholders::_1),
-        options
+        std::bind(&MoveForwardActionServer::handle_accepted, this, std::placeholders::_1)
     );
 
     publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
