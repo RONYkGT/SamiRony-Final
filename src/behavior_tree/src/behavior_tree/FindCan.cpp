@@ -21,12 +21,8 @@ void FindCan::callback(const std_msgs::msg::UInt8::SharedPtr msg)
     RCLCPP_INFO(node_->get_logger(), "Received msg callback: %d", msg->data);
     can_position_ = msg->data;
 
-    if (can_position_ == item_position::CENTER && turning_in_progress_)
-    {
-        RCLCPP_INFO(node_->get_logger(), "Can in center - Halting ongoing actions.");
-        halt();
-    }
 }
+
 
 BT::NodeStatus FindCan::onStart()
 {
@@ -35,7 +31,7 @@ BT::NodeStatus FindCan::onStart()
     // If can is already in the center, return SUCCESS
     if (can_position_ == item_position::CENTER)
     {
-        return BT::NodeStatus::SUCCESS;
+        return BT::NodeStatus::RUNNING;
     }
 
     return BT::NodeStatus::RUNNING;
@@ -46,7 +42,7 @@ BT::NodeStatus FindCan::onRunning()
     RCLCPP_INFO(node_->get_logger(), "Running FindCan action.");
     rclcpp::spin_some(node_);
     RCLCPP_INFO(node_->get_logger(), "Node spinned");
-    
+ 
     // If can is centered, halt ongoing actions and return SUCCESS
     if (can_position_ == item_position::CENTER)
     {
@@ -55,7 +51,7 @@ BT::NodeStatus FindCan::onRunning()
         {
             halt();
         }
-        return BT::NodeStatus::SUCCESS;
+        return BT::NodeStatus::RUNNING;
     }
 
     // Check if action server is available before sending a goal
