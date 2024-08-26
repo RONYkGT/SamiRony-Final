@@ -9,11 +9,12 @@ find_package(bot_behavior_interfaces REQUIRED)
 
 include_directories(include)
 
-# Add executable for both TurnLeftActionServer and TurnRightActionServer
+# Add executable for all action servers
 add_executable(turn_action_servers
   src/main.cpp
   src/robot_driver_cpp/turn_left_action_server.cpp
   src/robot_driver_cpp/turn_right_action_server.cpp
+  src/robot_driver_cpp/move_forward_action_server.cpp
 )
 
 ament_target_dependencies(turn_action_servers
