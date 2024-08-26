@@ -25,6 +25,12 @@ RUN pip3 install --no-cache-dir \
     supervision
 
 RUN pip3 install --no-cache-dir ultralytics
+RUN pip3 install --no-cache-dir pyzbar
+
+RUN apt-get update && apt-get install -y \
+    libzbar0 \
+    && rm -rf /var/lib/apt/lists/*
+    
 # Create a workspace directory inside the container
 RUN mkdir -p /root/ros_ws/src
 

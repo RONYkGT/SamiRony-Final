@@ -41,6 +41,6 @@ BT::NodeStatus CanInView::tick()
     {
         RCLCPP_DEBUG(node_->get_logger(), "Waiting for can position");
         // Return RUNNING while waiting for the message to arrive
-        return BT::NodeStatus::RUNNING;
+        return BT::NodeStatus::FAILURE;
     }
 }
