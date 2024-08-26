@@ -66,6 +66,13 @@ BT::NodeStatus FindCan::onRunning()
     if (can_position_ == item_position::LEFT || can_position_ == item_position::NOT_IN_VIEW)
     {
         RCLCPP_INFO(node_->get_logger(), "3");
+        if (turn_right_goal_handle_)
+        {
+            auto cancel_future = turn_right_client_->async_cancel_goal(turn_right_goal_handle_);
+            rclcpp::spin_until_future_complete(node_, cancel_future);
+            RCLCPP_INFO(node_->get_logger(), "TurnRight action canceled.1");
+            turn_right_goal_handle_.reset();
+        }
         if (!turn_left_goal_handle_)
         {
             auto goal = bot_behavior_interfaces::action::TurnLeft::Goal();
@@ -83,6 +90,13 @@ BT::NodeStatus FindCan::onRunning()
     if (can_position_ == item_position::RIGHT)
     {
         RCLCPP_INFO(node_->get_logger(), "4");
+        if (turn_left_goal_handle_)
+        {
+            auto cancel_future = turn_left_client_->async_cancel_goal(turn_left_goal_handle_);
+            rclcpp::spin_until_future_complete(node_, cancel_future);
+            RCLCPP_INFO(node_->get_logger(), "TurnLeft action canceled.1");
+            turn_left_goal_handle_.reset();
+        }
         if (!turn_right_goal_handle_)
         {
             auto goal = bot_behavior_interfaces::action::TurnRight::Goal();
