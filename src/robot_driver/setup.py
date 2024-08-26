@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'turn_right_action_server = robot_driver.TurnRightActionServer:main',
             'turn_left_action_server = robot_driver.TurnLeftActionServer:main',
+            'move_forward_action_server = robot_driver.MoveForwardActionServer:main',
 
         ],
     },
