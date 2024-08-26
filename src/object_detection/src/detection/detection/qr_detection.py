@@ -89,8 +89,8 @@ class QRCodeDetector(Node):
             self.position_publisher.publish(position_msg)
 
             # Display the frame
-            cv2.imshow("Barcode/QR Code Reader", frame)
-            cv2.waitKey(1)
+            #cv2.imshow("Barcode/QR Code Reader", frame)
+            #cv2.waitKey(1)
 
         except Exception as e:
             self.get_logger().error(f"Error in listener_callback: {e}")
