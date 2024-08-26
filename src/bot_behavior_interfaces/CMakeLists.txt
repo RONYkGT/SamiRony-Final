@@ -13,6 +13,8 @@ rosidl_generate_interfaces(
   ${PROJECT_NAME}
   "action/TurnRight.action"
   "action/TurnLeft.action"
+  "action/MoveForward.action"
+
 )
 
 ament_export_dependencies(rosidl_default_runtime)
