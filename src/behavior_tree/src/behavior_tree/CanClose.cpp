@@ -12,7 +12,7 @@ CanClose::CanClose(const std::string& name, const BT::NodeConfiguration& config)
 
 void CanClose::callback(const std_msgs::msg::Float32::SharedPtr msg)
 {
-    can_distance_ = msg;  // Assuming the first range is the one to be checked
+    can_distance_ = msg->data;   // Assuming the first range is the one to be checked
     RCLCPP_DEBUG(node_->get_logger(), "Received laser scan data: distance to can = %f", can_distance_);
 }
 

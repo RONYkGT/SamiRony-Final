@@ -6,7 +6,7 @@ OnBlackStrip::OnBlackStrip(const std::string& name, const BT::NodeConfiguration&
     node_->get_logger().set_level(rclcpp::Logger::Level::Debug);
     // Initialize ROS subscriber to the relevant topic
     subscriber_ = node_->create_subscription<std_msgs::msg::Bool>(
-        "on_black_strip", 10, std::bind(&OnBlackStrip::callback, this, std::placeholders::_1));
+        "lineDetectionData", 10, std::bind(&OnBlackStrip::callback, this, std::placeholders::_1));
 }
 
 void OnBlackStrip::callback(const std_msgs::msg::Bool::SharedPtr msg)
