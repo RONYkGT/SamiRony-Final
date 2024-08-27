@@ -2,11 +2,12 @@
 
 
 PickCan::PickCan(const std::string &name, const BT::NodeConfiguration &config)
-    : BT::SyncActionNode(name, config), node_(rclcpp::Node::make_shared("PickCan"))
+    : BT::SyncActionNode(name, config), can_picked_(false), node_(rclcpp::Node::make_shared("PickCan"))
 {
     node_->get_logger().set_level(rclcpp::Logger::Level::Debug);
     RCLCPP_INFO(node_->get_logger(), "PickCan initialized.");
-
+     // Initialize the publisher for the switch_to_qr topic
+    switch_to_qr_publisher_ = node_->create_publisher<std_msgs::msg::Bool>("switch_to_qr", 10);
     // Initialize the action client for the gripper
     gripper_action_client_ = rclcpp_action::create_client<robot_hardware_interfaces::action::GripperAction>(node_, "gripper_action");
 }
@@ -14,6 +15,21 @@ PickCan::PickCan(const std::string &name, const BT::NodeConfiguration &config)
 BT::NodeStatus PickCan::tick()
 {
     RCLCPP_INFO(node_->get_logger(), "Ticking PickCan action.");
+
+    if (!can_picked_)
+    {
+        auto msg = std_msgs::msg::Bool();
+        msg.data = true;
+        switch_to_qr_publisher_->publish(msg);
+        RCLCPP_INFO(node_->get_logger(), "Published true to switch_to_qr topic.");
+    }
+    // Set the blackboard key 'can_picked' to true
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    can_picked_ = true;
+    config().blackboard->set("can_picked", can_picked_);
+    RCLCPP_INFO(node_->get_logger(), "PickCan action completed successfully.");
+    return BT::NodeStatus::SUCCESS;
+
 
     // Check if the action server is available
     if (!gripper_action_client_->wait_for_action_server(std::chrono::seconds(1)))

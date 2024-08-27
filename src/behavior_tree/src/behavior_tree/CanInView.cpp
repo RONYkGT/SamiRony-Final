@@ -27,13 +27,11 @@ BT::NodeStatus CanInView::tick()
         if (can_position_ == item_position::CENTER)
         {
             RCLCPP_DEBUG(node_->get_logger(), "Can in center view");
-            position_found = false;  // Reset for the next tick
             return BT::NodeStatus::SUCCESS;
         }
         else
         {
             RCLCPP_DEBUG(node_->get_logger(), "Can not in center view");
-            position_found = false;  // Reset for the next tick
             return BT::NodeStatus::FAILURE;
         }
     }

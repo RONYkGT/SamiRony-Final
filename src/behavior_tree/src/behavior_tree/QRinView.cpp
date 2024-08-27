@@ -27,13 +27,11 @@ BT::NodeStatus QRinView::tick()
         if (qr_position_ == item_position::CENTER)
         {
             RCLCPP_DEBUG(node_->get_logger(), "qr in center view");
-            position_found = false;  // Reset for the next tick
             return BT::NodeStatus::SUCCESS;
         }
         else
         {
             RCLCPP_DEBUG(node_->get_logger(), "qr not in center view");
-            position_found = false;  // Reset for the next tick
             return BT::NodeStatus::FAILURE;
         }
     }
