@@ -25,6 +25,11 @@ RUN pip3 install --no-cache-dir \
     supervision
 
 RUN pip3 install --no-cache-dir ultralytics
+
+RUN apt-get update && apt-get install -y \
+    ros-galactic-image-transport-plugins \
+    && rm -rf /var/lib/apt/lists/*
+
 # Create a workspace directory inside the container
 RUN mkdir -p /root/ros_ws/src
 

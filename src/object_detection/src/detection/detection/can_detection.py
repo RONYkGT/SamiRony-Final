@@ -1,6 +1,6 @@
 import cv2
 from cv_bridge import CvBridge
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage, UInt8
 from std_msgs.msg import UInt8
 import rclpy
 from rclpy.node import Node
@@ -11,10 +11,10 @@ class ImageSubscriber(Node):
     def __init__(self):
         super().__init__('image_subscriber')
 
-        # Subscribe to the image topic
+        # Subscribe to the compressed image topic
         self.subscription = self.create_subscription(
-            Image,
-            '/robot_interfaces/compressed',
+            CompressedImage,  # Subscribing to CompressedImage topic
+            '/robot_interfaces/compressed', 
             self.listener_callback,
             10
         )
@@ -33,8 +33,9 @@ class ImageSubscriber(Node):
         start_time = time.time()  # Start timing the processing
 
         try:
-            # Convert ROS image message to OpenCV image
-            current_frame = self.bridge.imgmsg_to_cv2(data, desired_encoding='bgr8')
+            # Convert the compressed ROS image message to an OpenCV image
+            np_arr = np.frombuffer(data.data, np.uint8)
+            current_frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
             # Convert the image to the HSV color space
             hsv_frame = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
@@ -98,8 +99,8 @@ class ImageSubscriber(Node):
             self.get_logger().info(f"Processing time: {processing_time:.2f} seconds")
 
             # Optionally display the resulting frame
-            #cv2.imshow("Camera Feed", current_frame)
-            #cv2.waitKey(1)
+            # cv2.imshow("Camera Feed", current_frame)
+            # cv2.waitKey(1)
 
         except Exception as e:
             self.get_logger().error(f"Error in listener_callback: {e}")
@@ -121,7 +122,6 @@ def main(args=None):
             rclpy.shutdown()
         else:
             image_subscriber.get_logger().warning("rclpy was not ok during shutdown.")
-
 
 if __name__ == '__main__':
     main()
