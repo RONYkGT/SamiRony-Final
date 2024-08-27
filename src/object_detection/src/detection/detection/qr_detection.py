@@ -1,15 +1,15 @@
-import cv2
-from cv_bridge import CvBridge, CvBridgeError
-from sensor_msgs.msg import CompressedImage, UInt8
 import rclpy
 from rclpy.node import Node
+from sensor_msgs.msg import Image
+from std_msgs.msg import UInt8
+import cv2
 import numpy as np
-from pyzbar import pyzbar  # Ensure you have pyzbar installed for QR code detection
-
+import pyzbar.pyzbar as pyzbar
+from cv_bridge import CvBridge
 
 # Define position constants
-LEFT = 1
-RIGHT = 3
+LEFT = 3
+RIGHT = 1
 CENTER = 2
 NOT_DETECTED = 0
 
@@ -21,9 +21,9 @@ class QRCodeDetector(Node):
     def __init__(self):
         super().__init__('qr_code_detector')
         
-        # Create a subscriber to the compressed image topic
+        # Create a subscriber to the image topic
         self.subscription = self.create_subscription(
-            CompressedImage,  # Change to CompressedImage
+            Image,
             '/robot_interfaces/compressed', 
             self.listener_callback,
             10
@@ -42,10 +42,8 @@ class QRCodeDetector(Node):
 
     def listener_callback(self, msg):
         try:
-            # Convert ROS compressed image message to OpenCV image
-            np_arr = np.frombuffer(msg.data, np.uint8)
-            frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-
+            # Convert ROS image message to OpenCV image
+            frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
             height, width, _ = frame.shape
 
             decodedObjects = pyzbar.decode(frame)
@@ -91,11 +89,9 @@ class QRCodeDetector(Node):
             self.position_publisher.publish(position_msg)
 
             # Display the frame
-            # cv2.imshow("Barcode/QR Code Reader", frame)
-            # cv2.waitKey(1)
+            #cv2.imshow("Barcode/QR Code Reader", frame)
+            #cv2.waitKey(1)
 
-        except CvBridgeError as e:
-            self.get_logger().error(f"CV Bridge Error: {e}")
         except Exception as e:
             self.get_logger().error(f"Error in listener_callback: {e}")
 
