@@ -1,11 +1,17 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
-from std_msgs.msg import Int32
+from std_msgs.msg import UInt8
 import cv2
 import numpy as np
 import pyzbar.pyzbar as pyzbar
 from cv_bridge import CvBridge
+
+# Define position constants
+LEFT = 1
+RIGHT = 3
+CENTER = 2
+NOT_DETECTED = 0
 
 # Define region boundaries (as fractions of the frame width)
 LEFT_BOUNDARY = 0.45
@@ -26,7 +32,7 @@ class QRCodeDetector(Node):
 
         # Create a publisher for the QR code position
         self.position_publisher = self.create_publisher(
-            Int32,
+            UInt8,
             '/qr_in_view',
             10
         )
@@ -42,8 +48,8 @@ class QRCodeDetector(Node):
 
             decodedObjects = pyzbar.decode(frame)
             
-            # Initialize position as 0 (not detected)
-            position = 0
+            # Initialize position as NOT_DETECTED
+            position = NOT_DETECTED
 
             for obj in decodedObjects:
                 # Get the bounding box coordinates
@@ -58,11 +64,11 @@ class QRCodeDetector(Node):
                     
                     # Determine position of QR code
                     if center_x < width * LEFT_BOUNDARY:
-                        position = 3  # Left
+                        position = LEFT
                     elif center_x > width * RIGHT_BOUNDARY:
-                        position = 1  # Right
+                        position = RIGHT
                     else:
-                        position = 2  # Center
+                        position = CENTER
 
                     # Display the decoded text
                     cv2.putText(frame, str(obj.data, 'utf-8'), (50, 50), self.font, 2, (255, 0, 0), 3)
@@ -71,20 +77,20 @@ class QRCodeDetector(Node):
                     position_text = f"Position: {position}"
                     cv2.putText(frame, position_text, (50, 100), self.font, 1, (0, 255, 0), 2)
 
-            # If no QR codes are detected, set position to 0
+            # If no QR codes are detected, set position to NOT_DETECTED
             if not decodedObjects:
-                position = 0
+                position = NOT_DETECTED
                 position_text = f"Position: {position}"
                 cv2.putText(frame, position_text, (50, 100), self.font, 1, (0, 255, 0), 2)
 
             # Publish the position
-            position_msg = Int32()
+            position_msg = UInt8()
             position_msg.data = position
             self.position_publisher.publish(position_msg)
 
             # Display the frame
-            cv2.imshow("Barcode/QR Code Reader", frame)
-            cv2.waitKey(1)
+            #cv2.imshow("Barcode/QR Code Reader", frame)
+            #cv2.waitKey(1)
 
         except Exception as e:
             self.get_logger().error(f"Error in listener_callback: {e}")
