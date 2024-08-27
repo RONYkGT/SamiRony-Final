@@ -4,29 +4,33 @@
     <RetryUntilSuccessful num_attempts="5">
       <ReactiveSequence>
         <ReactiveFallback>
-          <ReactiveFallback>
-            <CanInView/>
-            <CanClose/>
-          </ReactiveFallback>
-          <FindCan/>
-        </ReactiveFallback>
-        <ReactiveFallback>
-          <CanClose/>
-          <MoveForward/>
-        </ReactiveFallback>
-        <ReactiveFallback>
           <CanPicked/>
-          <PickCan/>
+          <ReactiveSequence>
+            <ReactiveFallback>
+              <ReactiveFallback>
+                <CanInView/>
+                <CanClose/>
+              </ReactiveFallback>
+              <FindCan/>
+            </ReactiveFallback>
+            <ReactiveFallback>
+              <CanClose/>
+              <MoveForward/>
+            </ReactiveFallback>
+            <PickCan/>
+          </ReactiveSequence>
         </ReactiveFallback>
-        <ReactiveFallback>
-          <QRinView/>
-          <FindQR/>
-        </ReactiveFallback>
-        <ReactiveFallback>
-          <OnBlackStrip/>
-          <MoveForward/>
-        </ReactiveFallback>
-        <DropCan/>
+        <ReactiveSequence>
+          <ReactiveFallback>
+            <QRinView/>
+            <FindQR/>
+          </ReactiveFallback>
+          <ReactiveFallback>
+            <OnBlackStrip/>
+            <MoveForward/>
+          </ReactiveFallback>
+          <DropCan/>
+        </ReactiveSequence>
       </ReactiveSequence>
     </RetryUntilSuccessful>
   </BehaviorTree>
