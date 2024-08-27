@@ -4,8 +4,6 @@ using namespace std::chrono_literals;
 
 TurnLeftActionServer::TurnLeftActionServer() : Node("turn_left_action_server")
 {
-    this->declare_parameter<double>("turn_speed", 0.2);
-    this->get_parameter("turn_speed", turn_speed_);
 
     action_server_ = rclcpp_action::create_server<TurnLeft>(
         this,
@@ -43,6 +41,8 @@ void TurnLeftActionServer::handle_accepted(const std::shared_ptr<GoalHandleTurnL
 
 void TurnLeftActionServer::execute(const std::shared_ptr<GoalHandleTurnLeft> goal_handle)
 {
+    auto goal = goal_handle->get_goal();
+    turn_speed_ = goal->speed;
     RCLCPP_INFO(this->get_logger(), "Executing turn left with speed %f...", turn_speed_);
     
     twist_msg_.angular.z = turn_speed_;

@@ -20,7 +20,6 @@ void FindQR::callback(const std_msgs::msg::UInt8::SharedPtr msg)
 {
     RCLCPP_INFO(node_->get_logger(), "Received msg callback: %d", msg->data);
     qr_position_ = msg->data;
-
 }
 
 BT::NodeStatus FindQR::tick()
@@ -48,6 +47,9 @@ BT::NodeStatus FindQR::tick()
         return BT::NodeStatus::RUNNING;
     }
 
+    // Determine the appropriate speed based on QR code visibility
+    float speed = (qr_position_ == item_position::NOT_IN_VIEW) ? 0.5f : 0.1f;
+
     // Handle LEFT or NOT_IN_VIEW condition
     if (qr_position_ == item_position::LEFT || qr_position_ == item_position::NOT_IN_VIEW)
     {
@@ -62,6 +64,7 @@ BT::NodeStatus FindQR::tick()
         if (!turn_left_goal_handle_)
         {
             auto goal = bot_behavior_interfaces::action::TurnLeft::Goal();
+            goal.speed = speed; // Set the speed
             auto send_goal_options = rclcpp_action::Client<bot_behavior_interfaces::action::TurnLeft>::SendGoalOptions();
             send_goal_options.feedback_callback = [](auto, auto){};
             auto goal_future = turn_left_client_->async_send_goal(goal, send_goal_options);
@@ -86,6 +89,7 @@ BT::NodeStatus FindQR::tick()
         if (!turn_right_goal_handle_)
         {
             auto goal = bot_behavior_interfaces::action::TurnRight::Goal();
+            goal.speed = speed; // Set the speed
             auto send_goal_options = rclcpp_action::Client<bot_behavior_interfaces::action::TurnRight>::SendGoalOptions();
             send_goal_options.feedback_callback = [](auto, auto){};
             auto goal_future = turn_right_client_->async_send_goal(goal, send_goal_options);

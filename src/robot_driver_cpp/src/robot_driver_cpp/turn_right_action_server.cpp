@@ -43,6 +43,8 @@ void TurnRightActionServer::handle_accepted(const std::shared_ptr<GoalHandleTurn
 
 void TurnRightActionServer::execute(const std::shared_ptr<GoalHandleTurnRight> goal_handle)
 {
+    auto goal = goal_handle->get_goal();
+    turn_speed_ = goal->speed;
     RCLCPP_INFO(this->get_logger(), "Executing turn right with speed %f...", turn_speed_);
     
     twist_msg_.angular.z = -turn_speed_;
