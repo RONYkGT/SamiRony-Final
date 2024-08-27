@@ -8,8 +8,8 @@ import pyzbar.pyzbar as pyzbar
 from cv_bridge import CvBridge
 
 # Define position constants
-LEFT = 3
-RIGHT = 1
+LEFT = 1
+RIGHT = 3
 CENTER = 2
 NOT_DETECTED = 0
 
@@ -24,7 +24,7 @@ class QRCodeDetector(Node):
         # Create a subscriber to the image topic
         self.subscription = self.create_subscription(
             Image,
-            '/robot_interfaces/compressed', 
+            '/camera/image_raw', 
             self.listener_callback,
             10
         )

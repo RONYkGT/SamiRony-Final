@@ -5,6 +5,7 @@ from std_msgs.msg import Bool, UInt8
 import rclpy
 from rclpy.node import Node
 import time
+import os
 import numpy as np
 import subprocess  # Import subprocess to run external scripts
 
@@ -15,7 +16,7 @@ class ImageSubscriber(Node):
         # Subscribe to the image topic
         self.image_subscription = self.create_subscription(
             Image,
-            '/robot_interfaces/compressed',
+            '/camera/image_raw',
             self.listener_callback,
             10
         )
@@ -122,10 +123,19 @@ class ImageSubscriber(Node):
         if msg.data:
             self.get_logger().info("Received shutdown signal, running qr_detection.py...")
             self.shutdown_flag = True
-            # Run the qr_detection.py script
-            subprocess.Popen(['python3', 'qr_detection.py'])
+            
+            # Construct the full path to the qr_detection.py script
+            script_directory = os.path.dirname(os.path.abspath(__file__))
+            qr_detection_script = os.path.join(script_directory, 'qr_detection.py')
+            
+            if os.path.exists(qr_detection_script):
+                subprocess.Popen(['python3', qr_detection_script])
+            else:
+                self.get_logger().error(f"qr_detection.py not found at {qr_detection_script}")
+            
             self.destroy_node()
             rclpy.shutdown()
+
 
 def main(args=None):
     rclpy.init(args=args)
