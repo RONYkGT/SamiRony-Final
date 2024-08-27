@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'can_detection_node =detection.can_detection:main',
 	        'qr_detection_node = detection.qr_detection:main',
+            'main_node = detection.main:main',
         ],
     },
 )

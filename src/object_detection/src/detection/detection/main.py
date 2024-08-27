@@ -50,6 +50,7 @@ class SequentialRunnerNode(Node):
 
             # After stopping script1, start script2
             self.running_script1 = False
+            self.running_script2 = True
             self.run_script2()
 
     def run_script2(self):
