@@ -24,7 +24,7 @@ class QRCodeDetector(Node):
         # Create a subscriber to the image topic
         self.subscription = self.create_subscription(
             Image,
-            '/camera/image_raw', 
+            '/robot_interfaces/compressed', 
             self.listener_callback,
             10
         )

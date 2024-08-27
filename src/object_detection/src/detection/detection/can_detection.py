@@ -14,7 +14,7 @@ class ImageSubscriber(Node):
         # Subscribe to the image topic
         self.subscription = self.create_subscription(
             Image,
-            '/camera/image_raw',
+            '/robot_interfaces/compressed',
             self.listener_callback,
             10
         )
@@ -64,8 +64,8 @@ class ImageSubscriber(Node):
 
             # Image width to determine left, center, right regions
             img_width = current_frame.shape[1]
-            left_boundary = img_width * 0.45  # Narrower center region
-            right_boundary = img_width * 0.55  # Narrower center region
+            left_boundary = img_width * 0.40  # Narrower center region
+            right_boundary = img_width * 0.60  # Narrower center region
 
             for contour in contours:
                 # Get bounding box of the contour

@@ -3,7 +3,7 @@
 
 #include <behaviortree_cpp_v3/condition_node.h>
 #include <rclcpp/rclcpp.hpp>
-#include "sensor_msgs/msg/laser_scan.hpp"
+#include <std_msgs/msg/float32.hpp>
 
 class CanClose : public BT::ConditionNode
 {
@@ -17,12 +17,12 @@ public:
     }
 
 private:
-    void callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
+    void callback(const distanceToObstacle::SharedPtr msg);
 
     double can_distance_;
     double max_distance;
     rclcpp::Node::SharedPtr node_;
-    rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr subscriber_;
+    rclcpp::Subscription<distanceToObstacle>::SharedPtr subscriber_;
 };
 
 #endif // CANCLOSE_HPP
