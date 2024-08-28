@@ -1,8 +1,10 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
-from std_msgs.msg import UInt8
+from std_msgs.msg import UInt8, Bool
 import cv2
+import os
+import subprocess
 from cv_bridge import CvBridge
 from ultralytics import YOLO # type: ignore
 NOT_IN_VIEW = 0
@@ -23,6 +25,15 @@ class ImageSubscriber(Node):
         )
         self.subscription  # prevent unused variable warning
 
+        # Subscribe to the switch topic
+        self.switch_subscription = self.create_subscription(
+            Bool,
+            '/switch_to_qr',
+            self.switch_callback,
+            10
+        )
+        self.switch_subscription  # prevent unused variable warning
+
         # Create a publisher for the detected object position
         self.position_publisher = self.create_publisher(
             UInt8,
@@ -31,12 +42,16 @@ class ImageSubscriber(Node):
         )
 
         self.bridge = CvBridge()
+        self.shutdown_flag = False
 
         # Load YOLOv8 model
         self.model = YOLO("/root/ros_ws/src/object_detection/src/detection/detection/best.pt")  # Load your YOLOv8 model file
         self.model.fuse()  # Optimize the model if needed
 
     def listener_callback(self, data):
+        if self.shutdown_flag:
+            return
+        
         try:
             # Convert ROS image message to OpenCV image
             current_frame = self.bridge.imgmsg_to_cv2(data, desired_encoding='bgr8')
@@ -101,12 +116,32 @@ class ImageSubscriber(Node):
         except Exception as e:
             self.get_logger().error(f"Error in listener_callback: {e}")
 
+    def switch_callback(self, msg):
+        if msg.data:
+            self.get_logger().info("Received shutdown signal, running qr_detection.py...")
+            self.shutdown_flag = True
+            
+            # Construct the full path to the qr_detection.py script
+            script_directory = os.path.dirname(os.path.abspath(__file__))
+            qr_detection_script = os.path.join(script_directory, 'qr_detection.py')
+            
+            if os.path.exists(qr_detection_script):
+                subprocess.Popen(['python3', qr_detection_script])
+            else:
+                self.get_logger().error(f"qr_detection.py not found at {qr_detection_script}")
+            
+            self.destroy_node()
+            rclpy.shutdown()
+
+
+
 def main(args=None):
     rclpy.init(args=args)
     image_subscriber = ImageSubscriber()
 
     try:
-        rclpy.spin(image_subscriber)
+        while rclpy.ok() and not image_subscriber.shutdown_flag:
+            rclpy.spin_once(image_subscriber)
     except rclpy.executors.ExternalShutdownException:
         image_subscriber.get_logger().info("External shutdown signal received.")
     except Exception as e:
@@ -118,7 +153,5 @@ def main(args=None):
             rclpy.shutdown()
         else:
             image_subscriber.get_logger().warning("rclpy was not ok during shutdown.")
-
-
 if __name__ == '__main__':
     main()

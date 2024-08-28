@@ -8,8 +8,8 @@ import pyzbar.pyzbar as pyzbar
 from cv_bridge import CvBridge
 
 # Define position constants
-LEFT = 3
-RIGHT = 1
+LEFT = 1
+RIGHT = 3
 CENTER = 2
 NOT_DETECTED = 0
 
