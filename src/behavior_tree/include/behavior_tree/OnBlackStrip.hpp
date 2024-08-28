@@ -3,7 +3,8 @@
 
 #include <behaviortree_cpp_v3/condition_node.h>
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/int8.hpp>
+#include <bitset>
 
 
 class OnBlackStrip : public BT::ConditionNode
@@ -18,11 +19,12 @@ public:
     }
 
 private:
-    void callback(const std_msgs::msg::Bool::SharedPtr msg);
+    void callback(const std_msgs::msg::Int8::SharedPtr msg);
 
-    bool on_black_strip_ = false;
+    int on_black_strip_ = 0;
+    std::bitset<5> binary_; 
     rclcpp::Node::SharedPtr node_;
-    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr subscriber_;
+    rclcpp::Subscription<std_msgs::msg::Int8>::SharedPtr subscriber_;
 };
 
 #endif // ONBLACKSTRIP_HPP

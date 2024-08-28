@@ -2,7 +2,7 @@
 <root BTCPP_format="4">
   <BehaviorTree ID="Untitled">
     <RetryUntilSuccessful num_attempts="5">
-      <ReactiveSequence>
+      <Sequence>
         <ReactiveFallback>
           <CanPicked/>
           <ReactiveSequence>
@@ -31,7 +31,7 @@
           </ReactiveFallback>
           <DropCan/>
         </ReactiveSequence>
-      </ReactiveSequence>
+      </Sequence>
     </RetryUntilSuccessful>
   </BehaviorTree>
 

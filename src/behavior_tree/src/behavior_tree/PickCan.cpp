@@ -23,12 +23,8 @@ BT::NodeStatus PickCan::tick()
         switch_to_qr_publisher_->publish(msg);
         RCLCPP_INFO(node_->get_logger(), "Published true to switch_to_qr topic.");
     }
-    // Set the blackboard key 'can_picked' to true
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    can_picked_ = true;
-    config().blackboard->set("can_picked", can_picked_);
-    RCLCPP_INFO(node_->get_logger(), "PickCan action completed successfully.");
-    return BT::NodeStatus::SUCCESS;
+
+    //return BT::NodeStatus::SUCCESS;
 
 
     // Check if the action server is available
@@ -60,6 +56,7 @@ BT::NodeStatus PickCan::tick()
         return BT::NodeStatus::FAILURE;
     }
     config().blackboard->set("gripper_goal_handle", goal_handle);
+    config().blackboard->set("gripper_action_client_", gripper_action_client_);
 
     // Simulate the time to pick up the can
     std::this_thread::sleep_for(std::chrono::seconds(5));
