@@ -31,6 +31,10 @@ RUN apt-get update && apt-get install -y \
     libzbar0 \
     && rm -rf /var/lib/apt/lists/*
     
+RUN apt-get update && apt-get install -y \
+    ros-galactic-image-transport-plugins \
+    && rm -rf /var/lib/apt/lists/*
+
 # Create a workspace directory inside the container
 RUN mkdir -p /root/ros_ws/src
 
