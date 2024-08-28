@@ -76,7 +76,10 @@ install(TARGETS
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
-
+install(
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}/
+)
 ament_export_include_directories(include ${bot_behavior_interfaces_INCLUDE_DIRS})  
 ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
