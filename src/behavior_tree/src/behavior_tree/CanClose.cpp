@@ -6,17 +6,14 @@ CanClose::CanClose(const std::string& name, const BT::NodeConfiguration& config)
     node_->get_logger().set_level(rclcpp::Logger::Level::Debug);
 
     // Initialize ROS subscriber to the laser scan topic
-    subscriber_ = node_->create_subscription<sensor_msgs::msg::LaserScan>(
-        "scan", 10, std::bind(&CanClose::callback, this, std::placeholders::_1));
+    subscriber_ = node_->create_subscription<std_msgs::msg::Float32>(
+        "distanceToObstacle", 10, std::bind(&CanClose::callback, this, std::placeholders::_1));
 }
 
-void CanClose::callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
+void CanClose::callback(const std_msgs::msg::Float32::SharedPtr msg)
 {
-    if (!msg->ranges.empty())
-    {
-        can_distance_ = msg->ranges[0];  // Assuming the first range is the one to be checked
-        RCLCPP_DEBUG(node_->get_logger(), "Received laser scan data: distance to can = %f", can_distance_);
-    }
+    can_distance_ = msg->data;   // Assuming the first range is the one to be checked
+    RCLCPP_DEBUG(node_->get_logger(), "Received laser scan data: distance to can = %f", can_distance_);
 }
 
 BT::NodeStatus CanClose::tick()

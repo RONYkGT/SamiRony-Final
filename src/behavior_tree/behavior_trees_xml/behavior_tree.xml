@@ -2,32 +2,36 @@
 <root BTCPP_format="4">
   <BehaviorTree ID="Untitled">
     <RetryUntilSuccessful num_attempts="5">
-      <ReactiveSequence>
-        <ReactiveFallback>
-          <ReactiveFallback>
-            <CanInView/>
-            <CanClose/>
-          </ReactiveFallback>
-          <FindCan/>
-        </ReactiveFallback>
-        <ReactiveFallback>
-          <CanClose/>
-          <MoveForward/>
-        </ReactiveFallback>
+      <Sequence>
         <ReactiveFallback>
           <CanPicked/>
-          <PickCan/>
+          <ReactiveSequence>
+            <ReactiveFallback>
+              <ReactiveFallback>
+                <CanInView/>
+                <CanClose/>
+              </ReactiveFallback>
+              <FindCan/>
+            </ReactiveFallback>
+            <ReactiveFallback>
+              <CanClose/>
+              <MoveForward/>
+            </ReactiveFallback>
+            <PickCan/>
+          </ReactiveSequence>
         </ReactiveFallback>
-        <ReactiveFallback>
-          <QRinView/>
-          <FindQR/>
-        </ReactiveFallback>
-        <ReactiveFallback>
-          <OnBlackStrip/>
-          <MoveForward/>
-        </ReactiveFallback>
-        <DropCan/>
-      </ReactiveSequence>
+        <ReactiveSequence>
+          <ReactiveFallback>
+            <QRinView/>
+            <FindQR/>
+          </ReactiveFallback>
+          <ReactiveFallback>
+            <OnBlackStrip/>
+            <MoveForward/>
+          </ReactiveFallback>
+          <DropCan/>
+        </ReactiveSequence>
+      </Sequence>
     </RetryUntilSuccessful>
   </BehaviorTree>
 

@@ -2,6 +2,11 @@
 
 BT::NodeStatus CanPicked::tick()
 {
-    std::this_thread::sleep_for(std::chrono::seconds(3));
-    return BT::NodeStatus::SUCCESS;
+    // Check the blackboard key 'can_picked'
+    bool can_picked = false;
+    if (config().blackboard->get("can_picked", can_picked) && can_picked)
+    {
+        return BT::NodeStatus::SUCCESS;
+    }
+    return BT::NodeStatus::FAILURE;
 }

@@ -20,7 +20,6 @@ void FindCan::callback(const std_msgs::msg::UInt8::SharedPtr msg)
 {
     RCLCPP_INFO(node_->get_logger(), "Received msg callback: %d", msg->data);
     can_position_ = msg->data;
-
 }
 
 
@@ -62,6 +61,9 @@ BT::NodeStatus FindCan::onRunning()
         return BT::NodeStatus::RUNNING;
     }
 
+    // Set the speed based on whether the can is in view or not
+    float speed = (can_position_ == item_position::NOT_IN_VIEW) ? 0.5f : 0.1f;
+
     // Handle LEFT or NOT_IN_VIEW condition
     if (can_position_ == item_position::LEFT || can_position_ == item_position::NOT_IN_VIEW)
     {
@@ -76,6 +78,7 @@ BT::NodeStatus FindCan::onRunning()
         if (!turn_left_goal_handle_)
         {
             auto goal = bot_behavior_interfaces::action::TurnLeft::Goal();
+            goal.speed = speed;  // Set the speed for turning left
             auto send_goal_options = rclcpp_action::Client<bot_behavior_interfaces::action::TurnLeft>::SendGoalOptions();
             send_goal_options.feedback_callback = [](auto, auto){};
             auto goal_future = turn_left_client_->async_send_goal(goal, send_goal_options);
@@ -100,6 +103,7 @@ BT::NodeStatus FindCan::onRunning()
         if (!turn_right_goal_handle_)
         {
             auto goal = bot_behavior_interfaces::action::TurnRight::Goal();
+            goal.speed = speed;  // Set the speed for turning right
             auto send_goal_options = rclcpp_action::Client<bot_behavior_interfaces::action::TurnRight>::SendGoalOptions();
             send_goal_options.feedback_callback = [](auto, auto){};
             auto goal_future = turn_right_client_->async_send_goal(goal, send_goal_options);
