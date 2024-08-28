@@ -22,11 +22,25 @@
         </ReactiveFallback>
         <ReactiveSequence>
           <ReactiveFallback>
-            <QRinView/>
+            <ReactiveFallback>
+              <QRinView/>
+              <OnBlackStrip/>
+            </ReactiveFallback>
             <FindQR/>
           </ReactiveFallback>
           <ReactiveFallback>
             <OnBlackStrip/>
+            <MoveForward/>
+          </ReactiveFallback>
+          <ReactiveFallback>
+            <ReactiveFallback>
+              <LineCentered/>
+              <OnStopStrip/>
+            </ReactiveFallback>
+            <CenterLine/>
+          </ReactiveFallback>
+          <ReactiveFallback>
+            <OnStopStrip/>
             <MoveForward/>
           </ReactiveFallback>
           <DropCan/>
@@ -43,15 +57,21 @@
                editable="true"/>
     <Condition ID="CanPicked"
                editable="true"/>
+    <Action ID="CenterLine"
+            editable="true"/>
     <Action ID="DropCan"
             editable="true"/>
     <Action ID="FindCan"
             editable="true"/>
     <Action ID="FindQR"
             editable="true"/>
+    <Condition ID="LineCentered"
+               editable="true"/>
     <Action ID="MoveForward"
             editable="true"/>
     <Condition ID="OnBlackStrip"
+               editable="true"/>
+    <Condition ID="OnStopStrip"
                editable="true"/>
     <Action ID="PickCan"
             editable="true"/>

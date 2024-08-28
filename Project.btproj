@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="Project">
+    <include path="src/behavior_tree/behavior_trees_xml/behavior_tree.xml"/>
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <Condition ID="CanClose" editable="true"/>
+        <Condition ID="CanInView" editable="true"/>
+        <Condition ID="CanPicked" editable="true"/>
+        <Action ID="CenterLine" editable="true"/>
+        <Action ID="DropCan" editable="true"/>
+        <Action ID="FindCan" editable="true"/>
+        <Action ID="FindQR" editable="true"/>
+        <Condition ID="LineCentered" editable="true"/>
+        <Action ID="MoveForward" editable="true"/>
+        <Condition ID="OnBlackStrip" editable="true"/>
+        <Condition ID="OnStopStrip" editable="true"/>
+        <Action ID="PickCan" editable="true"/>
+        <Condition ID="QRinView" editable="true"/>
+    </TreeNodesModel>
+</root>
