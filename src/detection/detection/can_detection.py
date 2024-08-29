@@ -1,6 +1,6 @@
 import cv2
 from cv_bridge import CvBridge
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage, Image
 from std_msgs.msg import Bool, UInt8
 import rclpy
 from rclpy.node import Node
@@ -14,7 +14,7 @@ class ImageSubscriber(Node):
         super().__init__('image_subscriber')
 
         # Declare and get parameters
-        self.declare_parameter('image_topic', '/camera/image_raw')
+        self.declare_parameter('image_topic', '/robot_interfaces/compressed')
         self.declare_parameter('switch_topic', '/switch_to_qr')
         self.declare_parameter('position_topic', '/can_in_view')
 
@@ -45,9 +45,9 @@ class ImageSubscriber(Node):
         left_boundary_ratio = self.get_parameter('left_boundary_ratio').get_parameter_value().double_value
         right_boundary_ratio = self.get_parameter('right_boundary_ratio').get_parameter_value().double_value
 
-        # Subscribe to the image topic
+        # Subscribe to the compressed image topic
         self.image_subscription = self.create_subscription(
-            Image,
+            CompressedImage,
             image_topic,
             self.listener_callback,
             10
@@ -84,8 +84,8 @@ class ImageSubscriber(Node):
         start_time = time.time()
 
         try:
-            # Convert ROS image message to OpenCV image
-            current_frame = self.bridge.imgmsg_to_cv2(data, desired_encoding='bgr8')
+            # Convert ROS compressed image message to OpenCV image
+            current_frame = self.bridge.compressed_imgmsg_to_cv2(data, desired_encoding='bgr8')
 
             # Convert the image to the HSV color space
             hsv_frame = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
@@ -149,7 +149,6 @@ class ImageSubscriber(Node):
 
         except Exception as e:
             self.get_logger().error(f"Error in listener_callback: {e}")
-
 
     def switch_callback(self, msg):
         if msg.data:

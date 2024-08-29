@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import UInt8
 import cv2
 import numpy as np
@@ -18,7 +18,7 @@ class QRCodeDetector(Node):
         super().__init__('qr_code_detector')
 
         # Declare parameters
-        self.declare_parameter('image_topic', '/camera/image_raw')
+        self.declare_parameter('image_topic', '/robot_interfaces/compressed')
         self.declare_parameter('position_topic', '/qr_in_view')
         self.declare_parameter('left_boundary_ratio', 0.45)
         self.declare_parameter('right_boundary_ratio', 0.55)
@@ -31,7 +31,7 @@ class QRCodeDetector(Node):
 
         # Create a subscriber to the image topic
         self.subscription = self.create_subscription(
-            Image,
+            CompressedImage,
             image_topic, 
             self.listener_callback,
             10
@@ -50,8 +50,8 @@ class QRCodeDetector(Node):
 
     def listener_callback(self, msg):
         try:
-            # Convert ROS image message to OpenCV image
-            frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            # Convert ROS compressed image message to OpenCV image
+            frame = self.bridge.compressed_imgmsg_to_cv2(msg, desired_encoding='bgr8')
             height, width, _ = frame.shape
 
             decodedObjects = pyzbar.decode(frame)
@@ -97,7 +97,7 @@ class QRCodeDetector(Node):
             self.position_publisher.publish(position_msg)
 
             # Display the frame
-            # cv2.imshow("Barcode/QR Code Reader", frame)
+            # cv2.imshow("QRCode Detector", frame)
             # cv2.waitKey(1)
 
         except Exception as e:
