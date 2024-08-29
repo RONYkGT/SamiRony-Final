@@ -1,3 +1,3 @@
 move_forward_action_server:
   ros__parameters:
-    move_speed: 0.2
+    move_speed: 0.5

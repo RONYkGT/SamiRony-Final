@@ -1,0 +1,13 @@
+FindCan:
+  ros__parameters:
+    slow_turn_speed: 0.1
+    fast_turn_speed: 0.5
+
+FindQR:
+  ros__parameters:
+    slow_turn_speed: 0.1
+    fast_turn_speed: 0.5
+
+CanClose:
+  ros__parameters:
+    max_distance: 0.5

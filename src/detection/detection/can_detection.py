@@ -109,24 +109,28 @@ class ImageSubscriber(Node):
             object_detected = False
             position = 0
 
-            # Image width to determine left, center, right regions
-            img_width = current_frame.shape[1]
-            left_boundary = img_width * self.left_boundary_ratio
-            right_boundary = img_width * self.right_boundary_ratio
-
-            for contour in contours:
-                x, y, w, h = cv2.boundingRect(contour)
+            # Find the largest contour based on area
+            if contours:
+                largest_contour = max(contours, key=cv2.contourArea)
+                x, y, w, h = cv2.boundingRect(largest_contour)
                 center_x = x + w // 2
 
+                # Draw the bounding rectangle of the largest contour
                 cv2.rectangle(current_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-                object_detected = True
+                # Determine the position of the object
+                img_width = current_frame.shape[1]
+                left_boundary = img_width * self.left_boundary_ratio
+                right_boundary = img_width * self.right_boundary_ratio
+
                 if center_x < left_boundary:
                     position = 1  # Left
                 elif center_x > right_boundary:
                     position = 3  # Right
                 else:
                     position = 2  # Center
+
+                object_detected = True
 
             if not object_detected:
                 self.get_logger().info("Object not detected")
@@ -145,6 +149,7 @@ class ImageSubscriber(Node):
 
         except Exception as e:
             self.get_logger().error(f"Error in listener_callback: {e}")
+
 
     def switch_callback(self, msg):
         if msg.data:

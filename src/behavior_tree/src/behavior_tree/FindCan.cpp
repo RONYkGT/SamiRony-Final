@@ -7,6 +7,11 @@ FindCan::FindCan(const std::string &name, const BT::NodeConfiguration &config)
     node_->get_logger().set_level(rclcpp::Logger::Level::Debug);
     RCLCPP_INFO(node_->get_logger(), "FindCan initialized %d", item_position::CENTER);
 
+    node_->declare_parameter("slow_turn_speed", 0.1);
+    node_->get_parameter("slow_turn_speed", slow_turn_speed);
+    node_->declare_parameter("fast_turn_speed", 0.5);
+    node_->get_parameter("fast_turn_speed", fast_turn_speed);
+
     // Initialize action clients
     turn_left_client_ = rclcpp_action::create_client<bot_behavior_interfaces::action::TurnLeft>(node_, "turn_left");
     turn_right_client_ = rclcpp_action::create_client<bot_behavior_interfaces::action::TurnRight>(node_, "turn_right");
@@ -62,7 +67,8 @@ BT::NodeStatus FindCan::onRunning()
     }
 
     // Set the speed based on whether the can is in view or not
-    float speed = (can_position_ == item_position::NOT_IN_VIEW) ? 0.5f : 0.1f;
+    float speed = (can_position_ == item_position::NOT_IN_VIEW) ? fast_turn_speed : slow_turn_speed;
+    RCLCPP_INFO(node_->get_logger(), "turning speed: %f", speed);
 
     // Handle LEFT or NOT_IN_VIEW condition
     if (can_position_ == item_position::LEFT || can_position_ == item_position::NOT_IN_VIEW)

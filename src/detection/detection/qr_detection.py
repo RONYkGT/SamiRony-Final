@@ -13,18 +13,26 @@ RIGHT = 3
 CENTER = 2
 NOT_DETECTED = 0
 
-# Define region boundaries (as fractions of the frame width)
-LEFT_BOUNDARY = 0.45
-RIGHT_BOUNDARY = 0.55
-
 class QRCodeDetector(Node):
     def __init__(self):
         super().__init__('qr_code_detector')
-        
+
+        # Declare parameters
+        self.declare_parameter('image_topic', '/camera/image_raw')
+        self.declare_parameter('position_topic', '/qr_in_view')
+        self.declare_parameter('left_boundary_ratio', 0.45)
+        self.declare_parameter('right_boundary_ratio', 0.55)
+
+        # Get parameters
+        image_topic = self.get_parameter('image_topic').get_parameter_value().string_value
+        position_topic = self.get_parameter('position_topic').get_parameter_value().string_value
+        self.left_boundary_ratio = self.get_parameter('left_boundary_ratio').get_parameter_value().double_value
+        self.right_boundary_ratio = self.get_parameter('right_boundary_ratio').get_parameter_value().double_value
+
         # Create a subscriber to the image topic
         self.subscription = self.create_subscription(
             Image,
-            '/camera/image_raw', 
+            image_topic, 
             self.listener_callback,
             10
         )
@@ -33,7 +41,7 @@ class QRCodeDetector(Node):
         # Create a publisher for the QR code position
         self.position_publisher = self.create_publisher(
             UInt8,
-            '/qr_in_view',
+            position_topic,
             10
         )
 
@@ -63,9 +71,9 @@ class QRCodeDetector(Node):
                     center_x = int((x1 + x2 + x3 + x4) / 4)
                     
                     # Determine position of QR code
-                    if center_x < width * LEFT_BOUNDARY:
+                    if center_x < width * self.left_boundary_ratio:
                         position = LEFT
-                    elif center_x > width * RIGHT_BOUNDARY:
+                    elif center_x > width * self.right_boundary_ratio:
                         position = RIGHT
                     else:
                         position = CENTER
@@ -89,8 +97,8 @@ class QRCodeDetector(Node):
             self.position_publisher.publish(position_msg)
 
             # Display the frame
-            #cv2.imshow("Barcode/QR Code Reader", frame)
-            #cv2.waitKey(1)
+            # cv2.imshow("Barcode/QR Code Reader", frame)
+            # cv2.waitKey(1)
 
         except Exception as e:
             self.get_logger().error(f"Error in listener_callback: {e}")

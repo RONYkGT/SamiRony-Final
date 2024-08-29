@@ -1,25 +1,22 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, LogInfo
 from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
 import os
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    # Retrieve the package directories
+    # Retrieve the package directory
     behavior_tree_dir = get_package_share_directory('behavior_tree')
 
+    # Path to the YAML configuration file
+    config_file = os.path.join(behavior_tree_dir, 'config', 'config.yaml')
+
     return LaunchDescription([
-        DeclareLaunchArgument('use_sim_time', default_value='false', description='Use simulation time if true'),
-        
         Node(
             package='behavior_tree',
             executable='trashbot_main',
             name='trashbot_main',
             output='screen',
-            parameters=[{
-                'use_sim_time': LaunchConfiguration('use_sim_time')
-            }],
+            parameters=[config_file],  # Correctly pass the YAML file
             # Uncomment the line below to specify the node namespace
             # namespace='some_namespace'
         ),

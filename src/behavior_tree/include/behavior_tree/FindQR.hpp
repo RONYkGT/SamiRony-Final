@@ -38,6 +38,8 @@ private:
 
     bool turning_in_progress_;
     uint8_t qr_position_;
+    float fast_turn_speed;
+    float slow_turn_speed;
 };
 
 #endif // FIND_QR_HPP

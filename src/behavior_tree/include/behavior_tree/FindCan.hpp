@@ -39,6 +39,8 @@ private:
 
     bool turning_in_progress_;
     uint8_t can_position_;
+    float fast_turn_speed;
+    float slow_turn_speed;
 };
 
 #endif // FIND_CAN_HPP

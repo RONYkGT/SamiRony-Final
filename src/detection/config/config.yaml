@@ -21,3 +21,15 @@ image_subscriber:
     # Image width ratio for defining detection regions
     left_boundary_ratio: 0.45
     right_boundary_ratio: 0.55
+
+qr_code_detector:
+  ros__parameters:
+    # The topic name for the raw image feed
+    image_topic: '/camera/image_raw'
+
+    # The topic name for publishing object position
+    position_topic: '/qr_in_view'
+
+    # Image width ratio for defining detection regions
+    left_boundary_ratio: 0.45
+    right_boundary_ratio: 0.55
