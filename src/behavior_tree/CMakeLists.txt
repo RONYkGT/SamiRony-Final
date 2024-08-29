@@ -49,6 +49,9 @@ add_library(${PROJECT_NAME} SHARED
   src/behavior_tree/CanPicked.cpp
   src/behavior_tree/QRinView.cpp
   src/behavior_tree/OnBlackStrip.cpp
+  src/behavior_tree/CenterLine.cpp
+  src/behavior_tree/LineCentered.cpp
+  src/behavior_tree/OnStopStrip.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME} ${dependencies})

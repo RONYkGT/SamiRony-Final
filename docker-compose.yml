@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   galactic_dev:
-    image: galactic_dev_image
+    image: galactic_dev_image:alpine
     container_name: galactic_dev_container
     volumes:
       - ./src:/root/ros_ws/src:delegated

@@ -20,7 +20,7 @@ void LineCentered::callback(const std_msgs::msg::Int8::SharedPtr msg)
 BT::NodeStatus LineCentered::tick()
 {
     // Ensure the node processes any pending callbacks
-    rclcpp::spin_some(node_)
+    rclcpp::spin_some(node_);
 
     bool centered = (binary_[0] == 0 && binary_[4] == 0 && binary_[2] == 1);
 
