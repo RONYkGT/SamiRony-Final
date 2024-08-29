@@ -1,7 +1,7 @@
 #include "behavior_tree/CanClose.hpp"
 
 CanClose::CanClose(const std::string& name, const BT::NodeConfiguration& config)
-    : BT::ConditionNode(name, config), can_distance_(std::numeric_limits<double>::max()), max_distance(0.5), node_(rclcpp::Node::make_shared("CanClose"))
+    : BT::ConditionNode(name, config), can_distance_(std::numeric_limits<double>::max()), max_distance(6.0), node_(rclcpp::Node::make_shared("CanClose"))
 {
     node_->get_logger().set_level(rclcpp::Logger::Level::Debug);
 

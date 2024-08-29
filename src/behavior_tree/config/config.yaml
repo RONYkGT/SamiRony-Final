@@ -10,4 +10,4 @@ FindQR:
 
 CanClose:
   ros__parameters:
-    max_distance: 0.5
+    max_distance: 6.0
