@@ -17,6 +17,9 @@
 #include "behavior_tree/CanPicked.hpp"
 #include "behavior_tree/QRinView.hpp"
 #include "behavior_tree/OnBlackStrip.hpp"
+#include "behavior_tree/CenterLine.hpp"
+#include "behavior_tree/LineCentered.hpp"
+#include "behavior_tree/OnStopStrip.hpp"
 
 int main(int argc, char **argv)
 {
@@ -38,6 +41,9 @@ int main(int argc, char **argv)
     factory.registerNodeType<CanPicked>("CanPicked");
     factory.registerNodeType<QRinView>("QRinView");
     factory.registerNodeType<OnBlackStrip>("OnBlackStrip");
+    factory.registerNodeType<CenterLine>("CenterLine");
+    factory.registerNodeType<LineCentered>("LineCentered");
+    factory.registerNodeType<OnStopStrip>("OnStopStrip");
 
     // Load the XML file that defines the behavior tree
     

@@ -15,6 +15,8 @@ add_executable(turn_action_servers
   src/robot_driver_cpp/turn_left_action_server.cpp
   src/robot_driver_cpp/turn_right_action_server.cpp
   src/robot_driver_cpp/move_forward_action_server.cpp
+  src/robot_driver_cpp/move_right_action_server.cpp
+  src/robot_driver_cpp/move_left_action_server.cpp
 )
 
 ament_target_dependencies(turn_action_servers
