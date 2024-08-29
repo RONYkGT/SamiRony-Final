@@ -1,7 +1,7 @@
 image_subscriber:
   ros__parameters:
     # The topic name for the raw image feed
-    image_topic: '/camera/image_raw'
+    image_topic: '/robot_interfaces/compressed'
 
     # The topic name for the switch signal
     switch_topic: '/switch_to_qr'
@@ -25,7 +25,7 @@ image_subscriber:
 qr_code_detector:
   ros__parameters:
     # The topic name for the raw image feed
-    image_topic: '/camera/image_raw'
+    image_topic: '/robot_interfaces/compressed'
 
     # The topic name for publishing object position
     position_topic: '/qr_in_view'
