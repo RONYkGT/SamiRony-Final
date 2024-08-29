@@ -12,7 +12,12 @@ setup(
         ('share/' + package_name, ['package.xml']),
         # Install the launch directory
         ('share/' + package_name + '/launch', [
-            'launch/detection.launch.py'
+            'launch/detection.launch.py',
+            # Add any other launch files here if needed
+        ]),
+        # Install the config directory if you have one
+        ('share/' + package_name + '/config', [
+            'config/config.yaml'
         ]),
     ],
     install_requires=['setuptools'],

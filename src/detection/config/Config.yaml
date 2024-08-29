@@ -1,0 +1,23 @@
+image_subscriber:
+  ros__parameters:
+    # The topic name for the raw image feed
+    image_topic: '/camera/image_raw'
+
+    # The topic name for the switch signal
+    switch_topic: '/switch_to_qr'
+
+    # The topic name for publishing object position
+    position_topic: '/can_in_view'
+
+    # Color thresholds for object detection (HSV range for blue color)
+    lower_blue_hue: 100
+    lower_blue_saturation: 150
+    lower_blue_value: 0
+
+    upper_blue_hue: 140
+    upper_blue_saturation: 255
+    upper_blue_value: 255
+
+    # Image width ratio for defining detection regions
+    left_boundary_ratio: 0.45
+    right_boundary_ratio: 0.55
